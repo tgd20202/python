@@ -47,7 +47,26 @@ def universidades(filterCatalogue):
 
     return json.dumps(universidades.__dict__)
 
+@app.route('/openJournal/<string:url>')
+def openJournal(url):
+    print("este es el de open jo")
+    #url_Open_Journal = "{}".format(url)
+    url_Open_Journal = url.replace("aaa","/").replace("bbb", "?").replace("mmm", "https://")
+    print(url_Open_Journal)
+    r = requests.get(url_Open_Journal)
+    # print(r.content)
 
+    reponse = []
+    for index, item in enumerate(BeautifulSoup(requests.get(url_Open_Journal).content, 'lxml').find_all('div', {
+        "class": "obj_article_summary"})):
+        # print(item.find('a', href=True).getText().strip())
+        # print(item.find('a', href=True)['href'])
+        reponse.append({
+            "id": index,
+            "urlText": item.find('a', href=True).getText().strip(),
+            "url": item.find('a', href=True)['href']
+        })
+    return json.dumps(reponse)
 
 
 if __name__ == '__main__':
