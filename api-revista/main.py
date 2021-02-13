@@ -39,7 +39,7 @@ def googleAcademico(tema):
 def openJournal(url):
     print("este es el de open jo")
     #url_Open_Journal = "{}".format(url)
-    url_Open_Journal = url.replace("aaa","/").replace("bbb", "?").replace("mmm", "https://")
+    url_Open_Journal = url.replace("aaa","/").replace("bbb", "?").replace("mmm", "https://").replace("|", " ")
     # url_Open_Journal = url
     print(url_Open_Journal)
     r = requests.get(url_Open_Journal)
