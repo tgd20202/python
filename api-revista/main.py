@@ -21,40 +21,50 @@ def googleAcademico(tema):
     print(tema)
     tema = tema.replace("|", " ")
     print(tema)
-    urlGoogleAcademico = "https://scholar.google.com/scholar?hl=es&as_sdt=0%2C5&q={}&oq=".format(tema)
-    r = requests.get(urlGoogleAcademico)
-    print(r.content)
-
     reponse = []
-    for index, item in enumerate(BeautifulSoup(requests.get(urlGoogleAcademico).content, 'lxml').find_all('div', {"class": "gs_r gs_or gs_scl"})):
-        reponse.append({
-            "id": index,
-            "text": item.getText(),
-            "urlText":item.find('a', href=True).getText(),
-            "url": item.find('a', href=True)['href']
-            })
+    try:
+        urlGoogleAcademico = "https://scholar.google.com/scholar?hl=es&as_sdt=0%2C5&q={}&oq=".format(tema)
+        r = requests.get(urlGoogleAcademico)
+        print(r.content)
+
+
+        for index, item in enumerate(BeautifulSoup(requests.get(urlGoogleAcademico).content, 'lxml').find_all('div', {"class": "gs_r gs_or gs_scl"})):
+            reponse.append({
+                "id": index,
+                "text": item.getText(),
+                "urlText":item.find('a', href=True).getText(),
+                "url": item.find('a', href=True)['href']
+                })
+    except :
+        print("Error en captcha en google academics")
     return json.dumps(reponse)
 
 @app.route('/openJournal/<path:url>')
 def openJournal(url):
-    print("este es el de open jo")
+
     #url_Open_Journal = "{}".format(url)
     url_Open_Journal = url.replace("aaa","/").replace("bbb", "?").replace("mmm", "https://").replace("|", " ")
     # url_Open_Journal = url
-    print(url_Open_Journal)
-    r = requests.get(url_Open_Journal)
-    # print(r.content)
-
     reponse = []
-    for index, item in enumerate(BeautifulSoup(requests.get(url_Open_Journal).content, 'lxml').find_all('div', {
-        "class": "obj_article_summary"})):
-        # print(item.find('a', href=True).getText().strip())
-        # print(item.find('a', href=True)['href'])
-        reponse.append({
-            "id": index,
-            "urlText": item.find('a', href=True).getText().strip(),
-            "url": item.find('a', href=True)['href']
-        })
+
+    try:
+        print(url_Open_Journal)
+        r = requests.get(url_Open_Journal)
+        # print(r.content)
+
+
+        for index, item in enumerate(BeautifulSoup(requests.get(url_Open_Journal).content, 'lxml').find_all('div', {
+            "class": "obj_article_summary"})):
+            # print(item.find('a', href=True).getText().strip())
+            # print(item.find('a', href=True)['href'])
+            reponse.append({
+                "id": index,
+                "urlText": item.find('a', href=True).getText().strip(),
+                "url": item.find('a', href=True)['href']
+            })
+    except :
+        print("Error en la siguiente url")
+        print(url_Open_Journal)
     return json.dumps(reponse)
 
 @app.route('/openJournalPoli/<tema>')
@@ -102,14 +112,13 @@ def openJournalPoli(tema):
             })
 
     except:
-            print("OCURRIO UN ERROR")
+            print("OCURRIO UN ERROR EN EL OPENJOURNAL DEL POLI")
     return json.dumps(reponse)
 
 
 @app.route('/universidades/<filterCatalogue>')
 def universidades(filterCatalogue):
 
-    print("esta es la vaina que trae de java")
     print(filterCatalogue)
     filterCatalogue = filterCatalogue.replace("|", " ")
     #poli
