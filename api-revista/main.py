@@ -63,41 +63,46 @@ def openJournalPoli(tema):
     print(tema)
     tema = tema.replace("|", " ")
     print(tema)
-    url_Poli = "https://revistas.elpoli.edu.co/index.php/pol/search/search?query={}".format(tema)
-    r = requests.get(url_Poli)
     reponse = []
-    content = BeautifulSoup(r.text, 'lxml')
-    title = []
-    link = []
-    # Find table
-    # tabla del poli aparace con la clse listing
-    table = content.find('table', {'class': 'listing'})
-    # Find all tr rows
-    # cada uno de las filas con datos tiene el atributo valig=top
-    tr = table.findAll('tr', {'valign': 'top'})
-    for each_tr in tr:
-        td = each_tr.find_all('td')
-        # td que con un array desde cero y cada casilla es una columna, en este caso el titulo
-        title.append(td[1].text)
-        # se recorre todos los link en la terdera columna para extrer el link del pdf
-        # poner un lenght mayor a 5 para que no coja las a de pdf o html
-        td_aux = td[2].find_all('a')
-        # aux=0
-        for each_a in td_aux:
-            if (each_a.text == 'PDF'):
-                link.append(each_a['href'])
+    try:
+        url_Poli = "https://revistas.elpoli.edu.co/index.php/pol/search/search?query={}".format(tema)
+        r = requests.get(url_Poli)
 
-    # este for es para probar que cada campo del array este alineado titulo y link
-    # for index in range(0,len(title)-1):
-    #     print(title[index])
-    #     print(link[index])
+        content = BeautifulSoup(r.text, 'lxml')
+        title = []
+        link = []
+        # Find table
+        # tabla del poli aparace con la clse listing
+        table = content.find('table', {'class': 'listing'})
+        # Find all tr rows
+        # cada uno de las filas con datos tiene el atributo valig=top
+        tr = table.findAll('tr', {'valign': 'top'})
+        for each_tr in tr:
+            td = each_tr.find_all('td')
+            # td que con un array desde cero y cada casilla es una columna, en este caso el titulo
+            title.append(td[1].text)
+            # se recorre todos los link en la terdera columna para extrer el link del pdf
+            # poner un lenght mayor a 5 para que no coja las a de pdf o html
+            td_aux = td[2].find_all('a')
+            # aux=0
+            for each_a in td_aux:
+                if (each_a.text == 'PDF'):
+                    link.append(each_a['href'])
 
-    for index in range(0, len(title) - 1):
-        reponse.append({
-            'tittle': title[index],
-            'link': link[index]
-            # 'description': description[index]
-        })
+        # este for es para probar que cada campo del array este alineado titulo y link
+        # for index in range(0,len(title)-1):
+        #     print(title[index])
+        #     print(link[index])
+
+        for index in range(0, len(title) - 1):
+            reponse.append({
+                'tittle': title[index],
+                'link': link[index]
+                # 'description': description[index]
+            })
+
+    except:
+            print("OCURRIO UN ERROR")
     return json.dumps(reponse)
 
 
